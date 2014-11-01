@@ -22,8 +22,6 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
-            Console.WriteLine(ParserToHTML.ParseSpecialSymbols("<p> super test >>> \"<\""));
-
         }
         static string ReadDataFromFile(string fileName)
         {
