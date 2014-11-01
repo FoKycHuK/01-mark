@@ -17,14 +17,49 @@ namespace _01_mark
             lines = ParseDoubleUnderlines(lines);
             lines = RemoveEscapeChars(lines);
             return lines;
+
         }
         public static string ParseSpecialSymbols(string text)
         {
-            throw new NotImplementedException();
+            var res = "";
+            foreach (var symbol in text)
+            {
+                switch (symbol)
+                {
+                    case '<':
+                        res += "&lt;";
+                        break;
+                    case '>':
+                        res += "&gt;";
+                        break;
+                    case '"':
+                        res += "&quot;";
+                        break;
+                    default:
+                        res += symbol;
+                        break;
+                }
+            }
+            return res;
         }
         public static string[] ParseLines(string text)
         {
-            throw new NotImplementedException();
+            var lines = text.Split('\n');
+            lines[0] = "<p>" + lines[0];
+            lines[lines.Length - 1] += "</p>";
+            for (var i = 1; i < lines.Length; i++)
+            {
+                var allSpaces = true;
+                foreach (var symbol in lines[i])
+                    if (symbol != ' ')
+                        allSpaces = false;
+                if (allSpaces)
+                {
+                    lines[i - 1] += "</p>";
+                    lines[i] += "<p>";
+                }
+            }
+            return lines;
         }
         public static string[] ParseBackticks(string[] lines) //временный коммент. хочу тут добавлять к каждому спец символу экранизацию (/)
         {

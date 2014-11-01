@@ -22,15 +22,25 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
+            Console.WriteLine(ParserToHTML.ParseSpecialSymbols("<p> super test >>> \"<\""));
 
         }
         static string ReadDataFromFile(string fileName)
         {
-            throw new NotImplementedException();
+            var data = "";
+            using (var reader = new StreamReader(fileName))
+            {
+                data = reader.ReadToEnd();
+            }
+            return data;
         }
         static void WriteDataFromFile(string[] data, string fileName)
         {
-            throw new NotImplementedException();
+            using (var writer = new StreamWriter(fileName))
+            {
+                foreach (var line in data)
+                    writer.Write(line);
+            }
         }
     }
 }
