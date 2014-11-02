@@ -25,6 +25,8 @@ namespace _01_mark
             Assert.AreEqual("&lt;p&gt; super test &gt;&gt;&gt; &quot;&lt;&quot;", ParserToHTML.ParseSpecialSymbols(text));
         }
         #endregion
+
+
         #region Correct parsing lines tests
         [Test]
         public void Simple_parsing_lines()
@@ -46,6 +48,39 @@ namespace _01_mark
             string text;
             text = "some here\n\nText\n   \n        \n \n";
             Assert.AreEqual(new string[] { "<p>some here</p>", "<p>", "Text</p>", "   <p></p>", "        <p></p>", " <p>", "</p>" }, ParserToHTML.ParseLines(text));
+        }
+        #endregion
+
+        #region Correct parsing backticks
+        [Test]
+        public void Correct_insert_codes()
+        {
+            var text = new string[1];
+            text[0] = "uncoded, 'coded'";
+            Assert.AreEqual(new string[] {"uncoded, <code>coded</code>"}, ParserToHTML.ParseBackticks(text));
+        }
+        [Test]
+        public void Correct_handle_one_backtick()
+        {
+            var text = new string[1];
+            text[0] = "uncoded, 'uncoded too";
+            Assert.AreEqual(new string[] { "uncoded, 'uncoded too" }, ParserToHTML.ParseBackticks(text));
+        }
+        [Test]
+        public void Correct_handle_many_lines()
+        {
+            var text = new string[2];
+            text[0] = "uncoded, 'uncoded too";
+            text[1] = "and this uncoded too'";
+            Assert.AreEqual(new string[] { "uncoded, 'uncoded too", "and this uncoded too'" }, ParserToHTML.ParseBackticks(text));
+        }
+        [Test]
+        public void Correct_handle_many_lines_and_some_backticks()
+        {
+            var text = new string[2];
+            text[0] = "'uncoded";
+            text[1] = "this 'coded'";
+            Assert.AreEqual(new string[] { "'uncoded", "this <code>coded</code>" }, ParserToHTML.ParseBackticks(text));
         }
         #endregion
     }
