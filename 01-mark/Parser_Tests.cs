@@ -132,5 +132,33 @@ namespace _01_mark
             Assert.AreEqual(new string[] { "bla, \\_bla_bla_ bla" }, text);
         }
         #endregion
+
+
+        #region Correct parsing double underlines
+        [Test]
+        public void Simple_double_underlines()
+        {
+            var text = new string[1];
+            text[0] = "__THIS IS STRONG__";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "<strong>THIS IS STRONG</strong>" }, text);
+        }
+        [Test]
+        public void Complex_double_underlines()
+        {
+            var text = new string[1];
+            text[0] = "_norm__ __THIS__IS______STRONG__ __WAH___";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> <strong>WAH_</strong>" }, text);
+        }
+        [Test]
+        public void Avoid_tagged()
+        {
+            var text = new string[1];
+            text[0] = "\\__norm__ __norm\\__";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "\\__norm__ __norm\\__" }, text);
+        }
+        #endregion
     }
 }
