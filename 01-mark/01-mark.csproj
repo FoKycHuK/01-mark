@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParserOutputData.cs" />
     <Compile Include="ParserToHTML.cs" />
     <Compile Include="Parser_Tests.cs" />
     <Compile Include="Program.cs" />

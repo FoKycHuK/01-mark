@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace _01_mark
@@ -22,10 +23,7 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
-            var my = "";
-            var ar = new string[] { "123", "456" };
-            my = String.Join("", ar);
-            Console.WriteLine(my);
+            Console.WriteLine(Regex.Split("ololo123ol", "123")[1]);
         }
         static string ReadDataFromFile(string fileName)
         {
