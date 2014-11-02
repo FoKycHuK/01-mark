@@ -94,7 +94,7 @@ namespace _01_mark
         {
             var text = new string[1];
             text[0] = "'_this_is_it____'";
-            Assert.AreEqual(new string[] { "<code>_this_is_it____</code>" }, ParserToHTML.ParseBackticks(text));
+            Assert.AreEqual(new string[] { @"<code>\_this\_is\_it\_\_\_\_</code>" }, ParserToHTML.ParseBackticks(text));
         }
         #endregion
     }

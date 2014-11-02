@@ -22,6 +22,10 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
+            var my = "";
+            var ar = new string[] { "123", "456" };
+            my = String.Join("", ar);
+            Console.WriteLine(my);
         }
         static string ReadDataFromFile(string fileName)
         {
