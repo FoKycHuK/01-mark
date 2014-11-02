@@ -41,6 +41,7 @@ namespace _01_mark
         {
             using (var writer = new StreamWriter(fileName))
             {
+                writer.Write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
                 foreach (var line in data)
                     writer.Write(line);
             }
