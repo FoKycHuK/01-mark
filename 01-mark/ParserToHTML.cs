@@ -12,10 +12,10 @@ namespace _01_mark
         {
             var replacedSpecial = ParseSpecialSymbols(text);
             var lines = ParseLines(replacedSpecial);
-            lines = ParseBackticks(lines);
-            lines = ParseUnderlines(lines);
-            lines = ParseDoubleUnderlines(lines);
-            lines = RemoveEscapeChars(lines);
+            ParseBackticks(lines);
+            ParseUnderlines(lines);
+            ParseDoubleUnderlines(lines);
+            RemoveEscapeChars(lines);
             return lines;
 
         }
@@ -61,7 +61,7 @@ namespace _01_mark
             }
             return lines;
         }
-        public static string[] ParseBackticks(string[] lines) //временный коммент. хочу тут добавлять к каждому спец символу экранизацию (/)
+        public static void ParseBackticks(string[] lines) //временный коммент. хочу тут добавлять к каждому спец символу экранизацию (/)
         {
             
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
@@ -112,17 +112,16 @@ namespace _01_mark
 
                 lines[lineNum] = String.Join("", splited);
             }
-            return lines;
         }
-        public static string[] ParseUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные подчеркивания.
+        public static void ParseUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные подчеркивания.
         {
             throw new NotImplementedException();
         }
-        public static string[] ParseDoubleUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные двойные подчеркивания.
+        public static void ParseDoubleUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные двойные подчеркивания.
         {
             throw new NotImplementedException();
         }
-        public static string[] RemoveEscapeChars(string[] lines)
+        public static void RemoveEscapeChars(string[] lines)
         {
             throw new NotImplementedException();
         }
