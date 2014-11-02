@@ -23,6 +23,10 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
+            var data = ReadDataFromFile(inputFileName);
+            var htmlData = ParserToHTML.Parse(data);
+            WriteDataFromFile(htmlData, outputFileName);
+            Console.WriteLine("Convertion successful");
         }
         static string ReadDataFromFile(string fileName)
         {

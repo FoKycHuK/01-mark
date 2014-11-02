@@ -57,7 +57,7 @@ namespace _01_mark
         public void Correct_insert_codes()
         {
             var text = new string[1];
-            text[0] = "uncoded, 'coded'";
+            text[0] = "uncoded, `coded`";
             ParserToHTML.ParseBackticks(text);
             Assert.AreEqual(new string[] {"uncoded, <code>coded</code>"}, text);
         }
@@ -65,33 +65,33 @@ namespace _01_mark
         public void Correct_handle_one_backtick()
         {
             var text = new string[1];
-            text[0] = "uncoded, 'uncoded too";
+            text[0] = "uncoded, `uncoded too";
             ParserToHTML.ParseBackticks(text);
-            Assert.AreEqual(new string[] { "uncoded, 'uncoded too" }, text);
+            Assert.AreEqual(new string[] { "uncoded, `uncoded too" }, text);
         }
         [Test]
         public void Correct_handle_many_lines()
         {
             var text = new string[2];
-            text[0] = "uncoded, 'uncoded too";
-            text[1] = "and this uncoded too'";
+            text[0] = "uncoded, `uncoded too";
+            text[1] = "and this uncoded too`";
             ParserToHTML.ParseBackticks(text);
-            Assert.AreEqual(new string[] { "uncoded, 'uncoded too", "and this uncoded too'" }, text);
+            Assert.AreEqual(new string[] { "uncoded, `uncoded too", "and this uncoded too`" }, text);
         }
         [Test]
         public void Correct_handle_many_lines_and_some_backticks()
         {
             var text = new string[2];
-            text[0] = "'uncoded";
-            text[1] = "this 'coded'";
+            text[0] = "`uncoded";
+            text[1] = "this `coded`";
             ParserToHTML.ParseBackticks(text);
-            Assert.AreEqual(new string[] { "'uncoded", "this <code>coded</code>" }, text);
+            Assert.AreEqual(new string[] { "`uncoded", "this <code>coded</code>" }, text);
         }
         [Test]
         public void Correct_handle_underlines()
         {
             var text = new string[1];
-            text[0] = "_uncoded_, '_coded_'";
+            text[0] = "_uncoded_, `_coded_`";
             ParserToHTML.ParseBackticks(text);
             Assert.AreEqual(new string[] { @"_uncoded_, <code>\_coded\_</code>" }, text);
         }
@@ -99,7 +99,7 @@ namespace _01_mark
         public void Correct_handle_many_underlines()
         {
             var text = new string[1];
-            text[0] = "'_this_is_it____'";
+            text[0] = "`_this_is_it____`";
             ParserToHTML.ParseBackticks(text);
             Assert.AreEqual(new string[] { @"<code>\_this\_is\_it\_\_\_\_</code>" }, text);
         }

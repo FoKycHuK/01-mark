@@ -14,8 +14,8 @@ namespace _01_mark
             var replacedSpecial = ParseSpecialSymbols(text);
             var lines = ParseLines(replacedSpecial);
             ParseBackticks(lines);
-            ParseUnderlines(lines);
             ParseDoubleUnderlines(lines);
+            ParseUnderlines(lines);
             RemoveEscapeChars(lines);
             return lines;
 
@@ -52,7 +52,7 @@ namespace _01_mark
             {
                 var allSpaces = true;
                 foreach (var symbol in lines[i])
-                    if (symbol != ' ')
+                    if (symbol != ' ' && symbol != (char)13) //??? wtf
                         allSpaces = false;
                 if (allSpaces)
                 {
@@ -121,7 +121,7 @@ namespace _01_mark
             
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
-                var data = ParseOnParts(lines[lineNum], "\'");
+                var data = ParseOnParts(lines[lineNum], "`");
                 var parsed = data.parsedData;
                 foreach (var codedPart in data.parsedParts) // нейтрализуем все спецсимволы в распаршеном коде.
                     for (var i = codedPart.Item1; i <= codedPart.Item2; i++)
