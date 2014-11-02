@@ -26,7 +26,7 @@ namespace _01_mark
             var data = ReadDataFromFile(inputFileName);
             var htmlData = ParserToHTML.Parse(data);
             WriteDataFromFile(htmlData, outputFileName);
-            Console.WriteLine("Convertion successful");
+            Console.WriteLine("complete!");
         }
         static string ReadDataFromFile(string fileName)
         {

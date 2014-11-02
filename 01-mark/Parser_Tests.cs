@@ -131,6 +131,14 @@ namespace _01_mark
             ParserToHTML.ParseUnderlines(text);
             Assert.AreEqual(new string[] { "bla, \\_bla_bla_ bla" }, text);
         }
+        [Test]
+        public void Must_to_parse_underline_with_dots()
+        {
+            var text = new string[1];
+            text[0] = "_simple_.";
+            ParserToHTML.ParseUnderlines(text);
+            Assert.AreEqual(new string[] { "<em>simple</em>." }, text);
+        }
         #endregion
 
 
@@ -147,9 +155,9 @@ namespace _01_mark
         public void Complex_double_underlines()
         {
             var text = new string[1];
-            text[0] = "_norm__ __THIS__IS______STRONG__ __small(cause ends with 3 underlines, not 2)___";
+            text[0] = "_norm__ __THIS__IS______STRONG__ __small(cause 3 underline, not 2)___";
             ParserToHTML.ParseDoubleUnderlines(text);
-            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause ends with 3 underlines, not 2)___" }, text);
+            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause 3 underline, not 2)___" }, text);
         }
         [Test]
         public void Avoid_tagged()

@@ -80,7 +80,7 @@ namespace _01_mark
                 }
                 if (nowCoded)
                 {
-                    if (i == splited.Length - 1 && splited[i].Length == 0 || splited[i].Length > 0 && splited[i].First() == ' ')
+                    if (i == splited.Length - 1 && splited[i].Length == 0 || splited[i].Length > 0 && !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]")) //splited[i].First() == ' ')
                     {
                         codedParts.Add(Tuple.Create(codedFrom, i - 1));
                         nowCoded = false;
@@ -90,7 +90,7 @@ namespace _01_mark
                 }
                 else
                 {
-                    if (i == 1 && splited[0].Length == 0 || splited[i - 1].Length > 0 && splited[i - 1].Last() == ' ')
+                    if (i == 1 && splited[0].Length == 0 || splited[i - 1].Length > 0 && !Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))//splited[i - 1].Last() == ' ')
                     {
                         nowCoded = true;
                         codedFrom = i;
