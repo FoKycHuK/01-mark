@@ -147,9 +147,9 @@ namespace _01_mark
         public void Complex_double_underlines()
         {
             var text = new string[1];
-            text[0] = "_norm__ __THIS__IS______STRONG__ __WAH___";
+            text[0] = "_norm__ __THIS__IS______STRONG__ __small(cause ends with 3 underlines, not 2)___";
             ParserToHTML.ParseDoubleUnderlines(text);
-            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> <strong>WAH_</strong>" }, text);
+            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause ends with 3 underlines, not 2)___" }, text);
         }
         [Test]
         public void Avoid_tagged()
