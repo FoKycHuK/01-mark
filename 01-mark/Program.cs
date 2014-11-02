@@ -23,7 +23,6 @@ namespace _01_mark
                 inputFileName += args[0];
             if (args.Length >= 2)
                 outputFileName = args[1];
-            Console.WriteLine(Regex.Split("ololo123ol", "123")[1]);
         }
         static string ReadDataFromFile(string fileName)
         {
