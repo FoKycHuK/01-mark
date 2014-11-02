@@ -18,13 +18,11 @@ namespace _01_mark
             ParseUnderlines(lines);
             RemoveEscapeChars(lines);
             return lines;
-
         }
         public static string ParseSpecialSymbols(string text)
         {
             var res = "";
             foreach (var symbol in text)
-            {
                 switch (symbol)
                 {
                     case '<':
@@ -40,7 +38,6 @@ namespace _01_mark
                         res += symbol;
                         break;
                 }
-            }
             return res;
         }
         public static string[] ParseLines(string text)
@@ -52,7 +49,7 @@ namespace _01_mark
             {
                 var allSpaces = true;
                 foreach (var symbol in lines[i])
-                    if (symbol != ' ' && symbol != (char)13) //??? wtf
+                    if (symbol != ' ' && symbol != (char)13) //??? wtf кажется, винда добавляет с переносом (код 10) еще какой-то символ(код 13). ну ладно.
                         allSpaces = false;
                 if (allSpaces)
                 {
@@ -80,7 +77,10 @@ namespace _01_mark
                 }
                 if (nowCoded)
                 {
-                    if (i == splited.Length - 1 && splited[i].Length == 0 || splited[i].Length > 0 && !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]")) //splited[i].First() == ' ')
+                    if (i == splited.Length - 1 && 
+                        splited[i].Length == 0 || 
+                        splited[i].Length > 0 && 
+                        !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         codedParts.Add(Tuple.Create(codedFrom, i - 1));
                         nowCoded = false;
@@ -90,7 +90,10 @@ namespace _01_mark
                 }
                 else
                 {
-                    if (i == 1 && splited[0].Length == 0 || splited[i - 1].Length > 0 && !Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))//splited[i - 1].Last() == ' ')
+                    if (i == 1 &&
+                        splited[0].Length == 0 || 
+                        splited[i - 1].Length > 0 
+                        && !Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         nowCoded = true;
                         codedFrom = i;
@@ -160,7 +163,6 @@ namespace _01_mark
                 var oldLine = lines[lineNum];
                 var newLine = "";
                 for (var i = 0; i < oldLine.Length; i++)
-                {
                     if (oldLine[i] == '\\')
                     {
                         if (i != oldLine.Length - 1 && oldLine[i + 1] == '\\')
@@ -171,7 +173,6 @@ namespace _01_mark
                     }
                     else
                         newLine += oldLine[i];
-                }
                 lines[lineNum] = newLine;
             }
         }
