@@ -102,7 +102,7 @@ namespace _01_mark
             return new ParserOutputData(splited, codedParts);
         }
 
-        public static void ParseBackticks(string[] lines) //временный коммент. хочу тут добавлять к каждому спец символу экранизацию (/)
+        public static void ParseBackticks(string[] lines)
         {
             
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
@@ -130,9 +130,19 @@ namespace _01_mark
                 lines[lineNum] = String.Join("", parsed);
             }
         }
-        public static void ParseUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные подчеркивания.
+        public static void ParseUnderlines(string[] lines)
         {
-            throw new NotImplementedException();
+            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
+            {
+                var data = ParseOnParts(lines[lineNum], "_");
+                var parsed = data.parsedData;
+                foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
+                {
+                    parsed[selectedPart.Item1] = "<em>" + parsed[selectedPart.Item1];
+                    parsed[selectedPart.Item2] += "</em>";
+                }
+                lines[lineNum] = String.Join("", parsed);
+            }
         }
         public static void ParseDoubleUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные двойные подчеркивания.
         {
