@@ -106,6 +106,34 @@ namespace _01_mark
         #endregion
 
 
+        #region Correct parsing double underlines
+        [Test]
+        public void Simple_double_underlines()
+        {
+            var text = new string[1];
+            text[0] = "__THIS IS STRONG__";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "<strong>THIS IS STRONG</strong>" }, text);
+        }
+        [Test]
+        public void Complex_double_underlines()
+        {
+            var text = new string[1];
+            text[0] = "_norm__ __THIS__IS______STRONG__ __small(cause 3 underline, not 2)___";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause 3 underline, not 2)___" }, text);
+        }
+        [Test]
+        public void Avoid_tagged()
+        {
+            var text = new string[1];
+            text[0] = "\\__norm__ __norm\\__";
+            ParserToHTML.ParseDoubleUnderlines(text);
+            Assert.AreEqual(new string[] { "\\__norm__ __norm\\__" }, text);
+        }
+        #endregion
+
+
         #region Correct parsing underlines
         [Test]
         public void Simple_underlines()
@@ -138,34 +166,6 @@ namespace _01_mark
             text[0] = "_simple_.";
             ParserToHTML.ParseUnderlines(text);
             Assert.AreEqual(new string[] { "<em>simple</em>." }, text);
-        }
-        #endregion
-
-
-        #region Correct parsing double underlines
-        [Test]
-        public void Simple_double_underlines()
-        {
-            var text = new string[1];
-            text[0] = "__THIS IS STRONG__";
-            ParserToHTML.ParseDoubleUnderlines(text);
-            Assert.AreEqual(new string[] { "<strong>THIS IS STRONG</strong>" }, text);
-        }
-        [Test]
-        public void Complex_double_underlines()
-        {
-            var text = new string[1];
-            text[0] = "_norm__ __THIS__IS______STRONG__ __small(cause 3 underline, not 2)___";
-            ParserToHTML.ParseDoubleUnderlines(text);
-            Assert.AreEqual(new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause 3 underline, not 2)___" }, text);
-        }
-        [Test]
-        public void Avoid_tagged()
-        {
-            var text = new string[1];
-            text[0] = "\\__norm__ __norm\\__";
-            ParserToHTML.ParseDoubleUnderlines(text);
-            Assert.AreEqual(new string[] { "\\__norm__ __norm\\__" }, text);
         }
         #endregion
 
