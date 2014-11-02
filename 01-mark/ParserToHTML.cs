@@ -102,6 +102,18 @@ namespace _01_mark
             return new ParserOutputData(splited, codedParts);
         }
 
+        public static string AddTags(ParserOutputData data, string line, string tag)
+        {
+            var parsed = data.parsedData;
+            var startTag = "<" + tag + ">";
+            var endTag = "</" + tag + ">";
+            foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
+            {
+                parsed[selectedPart.Item1] = startTag + parsed[selectedPart.Item1];
+                parsed[selectedPart.Item2] += endTag;
+            }
+            return String.Join("", parsed);
+        }
         public static void ParseBackticks(string[] lines)
         {
             
@@ -110,24 +122,17 @@ namespace _01_mark
                 var data = ParseOnParts(lines[lineNum], "\'");
                 var parsed = data.parsedData;
                 foreach (var codedPart in data.parsedParts) // нейтрализуем все спецсимволы в распаршеном коде.
-                {
-                    parsed[codedPart.Item1] = "<code>" + parsed[codedPart.Item1];
-                    parsed[codedPart.Item2] += "</code>";
                     for (var i = codedPart.Item1; i <= codedPart.Item2; i++)
                     {
                         var newPart = "";
                         foreach (var symbol in parsed[i])
-                        {
                             if (symbol == '_')
                                 newPart += "\\_";
                             else
                                 newPart += symbol;
-                        }
                         parsed[i] = newPart;
                     }
-                }
-
-                lines[lineNum] = String.Join("", parsed);
+                lines[lineNum] = AddTags(data, lines[lineNum], "code");
             }
         }
         public static void ParseUnderlines(string[] lines)
@@ -135,13 +140,7 @@ namespace _01_mark
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
                 var data = ParseOnParts(lines[lineNum], "_");
-                var parsed = data.parsedData;
-                foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
-                {
-                    parsed[selectedPart.Item1] = "<em>" + parsed[selectedPart.Item1];
-                    parsed[selectedPart.Item2] += "</em>";
-                }
-                lines[lineNum] = String.Join("", parsed);
+                lines[lineNum] = AddTags(data, lines[lineNum], "em");
             }
         }
         public static void ParseDoubleUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные двойные подчеркивания.
