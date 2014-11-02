@@ -80,13 +80,23 @@ namespace _01_mark
                 }
                 if (nowCoded)
                 {
-                    codedParts.Add(Tuple.Create(codedFrom, i - 1));
-                    nowCoded = false;
+                    if (i == splited.Length - 1 || splited[i].Length > 0 && splited[i].First() == ' ')
+                    {
+                        codedParts.Add(Tuple.Create(codedFrom, i - 1));
+                        nowCoded = false;
+                    }
+                    else
+                        splited[i] = symbols + splited[i];
                 }
                 else
                 {
-                    nowCoded = true;
-                    codedFrom = i;
+                    if (i == 1 || splited[i - 1].Length > 0 && splited[i - 1].Last() == ' ')
+                    {
+                        nowCoded = true;
+                        codedFrom = i;
+                    }
+                    else
+                        splited[i - 1] += symbols;
                 }
             }
             return new ParserOutputData(splited, codedParts);
