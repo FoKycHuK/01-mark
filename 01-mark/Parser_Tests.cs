@@ -160,5 +160,50 @@ namespace _01_mark
             Assert.AreEqual(new string[] { "\\__norm__ __norm\\__" }, text);
         }
         #endregion
+
+
+        #region Correct removing escape symbol (\)
+        [Test]
+        public void Remove_single_symbols()
+        {
+            var text = new string[1];
+            text[0] = "\\ something, \\_removing it all";
+            ParserToHTML.RemoveEscapeChars(text);
+            Assert.AreEqual(new string[] { " something, _removing it all" }, text);
+        }
+        [Test]
+        public void Remove_single_symbols_in_dif_lines()
+        {
+            var text = new string[2];
+            text[0] = "begin\\";
+            text[1] = "\\end";
+            ParserToHTML.RemoveEscapeChars(text);
+            Assert.AreEqual(new string[] { "begin", "end" }, text);
+        }
+        [Test]
+        public void Pass_double_symbols()
+        {
+            var text = new string[1];
+            text[0] = "some\\\\thing";
+            ParserToHTML.RemoveEscapeChars(text);
+            Assert.AreEqual(new string[] { "some\\thing" }, text);
+        }
+        [Test]
+        public void Pass_double_symbols_double()
+        {
+            var text = new string[1];
+            text[0] = "some\\\\\\\\thing";
+            ParserToHTML.RemoveEscapeChars(text);
+            Assert.AreEqual(new string[] { "some\\\\thing" }, text);
+        }
+        [Test]
+        public void Remove_single_after_double()
+        {
+            var text = new string[1];
+            text[0] = "some\\\\\\thing";
+            ParserToHTML.RemoveEscapeChars(text);
+            Assert.AreEqual(new string[] { "some\\thing" }, text);
+        }
+        #endregion
     }
 }
