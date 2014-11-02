@@ -145,7 +145,7 @@ namespace _01_mark
                 lines[lineNum] = AddTags(data, lines[lineNum], "em");
             }
         }
-        public static void ParseDoubleUnderlines(string[] lines) //временный коммент. хочу тут реализовывать неэкранированные двойные подчеркивания.
+        public static void ParseDoubleUnderlines(string[] lines)
         {
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
@@ -155,7 +155,25 @@ namespace _01_mark
         }
         public static void RemoveEscapeChars(string[] lines)
         {
-            throw new NotImplementedException();
+            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
+            {
+                var oldLine = lines[lineNum];
+                var newLine = "";
+                for (var i = 0; i < oldLine.Length; i++)
+                {
+                    if (oldLine[i] == '\\')
+                    {
+                        if (i != oldLine.Length - 1 && oldLine[i + 1] == '\\')
+                        {
+                            newLine += '\\';
+                            i++;
+                        }
+                    }
+                    else
+                        newLine += oldLine[i];
+                }
+                lines[lineNum] = newLine;
+            }
         }
     }
 }
