@@ -106,6 +106,31 @@ namespace _01_mark
         #endregion
 
 
-        
+        #region Correct parsing underlines
+        [Test]
+        public void Simple_underlines()
+        {
+            var text = new string[1];
+            text[0] = "some, _SOME_ , some";
+            ParserToHTML.ParseUnderlines(text);
+            Assert.AreEqual(new string[] { "some, <em>SOME</em> , some" }, text);
+        }
+        [Test]
+        public void Complex_underlines()
+        {
+            var text = new string[1];
+            text[0] = "bla, _bla_bla_ bla _aa_____qqq_";
+            ParserToHTML.ParseUnderlines(text);
+            Assert.AreEqual(new string[] { "bla, <em>bla_bla</em> bla <em>aa_____qqq</em>" }, text);
+        }
+        [Test]
+        public void Avoid_tagged_underlines()
+        {
+            var text = new string[1];
+            text[0] = "bla, \\_bla_bla_ bla";
+            ParserToHTML.ParseUnderlines(text);
+            Assert.AreEqual(new string[] { "bla, \\_bla_bla_ bla" }, text);
+        }
+        #endregion
     }
 }
