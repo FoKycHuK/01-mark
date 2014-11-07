@@ -9,6 +9,7 @@ namespace _01_mark
     [TestFixture]
     class Parser_Tests
     {
+        //TODO. Регионы - зло. Их неудобно разворачивать. Регионами пользуются чтобы прятать плохой код
         #region Replace special symbols tests
         [Test]
         public void Simple_replace_special()
@@ -51,13 +52,17 @@ namespace _01_mark
         void ParsingBackticksTest(string[] text, string[] ans)
         {
             ParserToHTML.ParseBackticks(text);
+            //TODO. Не перепутаны ли местами аргументы - где Actual, где Expected? Чтобы не путаться, можно использовать синтаксис Assert.That(..., Is.EqaulTo(...))
             Assert.AreEqual(text, ans);
         }
+
+        //TODO. Посмотреть на Testcase. Мб будет удобнее использовать [TestCase("something", "somethingElse", TestName="читаемое название тест кейса")]?
         [Test]
         public void Correct_insert_codes()
         {
             ParsingBackticksTest(new string[] { "uncoded, `coded`" }, new string[] { "uncoded, <code>coded</code>" });
         }
+
         [Test]
         public void Correct_handle_one_backtick()
         {

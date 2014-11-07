@@ -19,8 +19,10 @@ namespace _01_mark
             RemoveEscapeChars(lines);
             return lines;
         }
+
         public static string ParseSpecialSymbols(string text)
         {
+            //TODO. а еще бывают аттрибуты в одинарных кавычках <div style='display:none'/>. Use HttpUtility.HtmlEncode
             var res = "";
             foreach (var symbol in text)
                 switch (symbol)
@@ -40,16 +42,21 @@ namespace _01_mark
                 }
             return res;
         }
+
         public static string[] ParseLines(string text)
         {
             var lines = text.Split('\n');
             lines[0] = "<p>" + lines[0];
             lines[lines.Length - 1] += "</p>";
-            for (var i = 1; i < lines.Length; i++)
-            {
-                var allSpaces = true;
-                foreach (var symbol in lines[i])
-                    if (symbol != ' ' && symbol != (char)13) //??? wtf кажется, винда добавляет с переносом (код 10) еще какой-то символ(код 13). ну ладно.
+            //TODO. Можно написать проще. Можно попробовать при помощи fold/Aggregate http://en.wikipedia.org/wiki/Fold_(higher-order_function) 
+            for (int i = 1; i < lines.Length; i++)
+            {                
+                //??? wtf кажется, винда добавляет с переносом (код 10) еще какой-то символ(код 13). ну ладно. 
+                //TODO. Это норма. см http://en.wikipedia.org/wiki/Newline. Было бы прикольно, чтобы парсер работал с разными newline, в том числе если в файле смесь /10/13 и /10
+                //TODO. можно проще. use Linq and String.IsNullOrWhiteSpace
+                bool allSpaces = true;
+                foreach (char symbol in lines[i])
+                    if (symbol != ' ' && symbol != (char) 13)
                         allSpaces = false;
                 if (allSpaces)
                 {
@@ -59,7 +66,8 @@ namespace _01_mark
             }
             return lines;
         }
-
+        
+        //TODO. очень очень сложно. см комментарии в почте.
         public static ParserOutputData ParseOnParts(string line, string symbols)
         {
             var splited = Regex.Split(line, symbols);
@@ -112,6 +120,7 @@ namespace _01_mark
             var parsed = data.parsedData;
             var startTag = "<" + tag + ">";
             var endTag = "</" + tag + ">";
+            //todo. use linq.
             foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
             {
                 parsed[selectedPart.Item1] = startTag + parsed[selectedPart.Item1];
@@ -137,9 +146,11 @@ namespace _01_mark
                                 newPart += symbol;
                         parsed[i] = newPart;
                     }
+                //TODO. вернуть ноый массив вместо того, чтобы изменять исходный.
                 lines[lineNum] = AddTags(data, lines[lineNum], "code");
             }
         }
+        //TODO. очень похожие методы. как исправить?
         public static void ParseUnderlines(string[] lines)
         {
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
