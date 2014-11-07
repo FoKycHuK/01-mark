@@ -12,6 +12,7 @@ namespace _01_mark
     {
         static void Main(string[] args)
         {
+            //TODO. Странное умолчание, что для входного файла путь относительно корня солюшна, для аутпута - от текущей 
             var inputFileName =  "../../../";
             var outputFileName = "output.html";
             if (args.Length == 0)
@@ -28,6 +29,8 @@ namespace _01_mark
             WriteDataFromFile(htmlData, outputFileName);
             Console.WriteLine("complete!");
         }
+
+        //TODO. Можно проще. File.ReadAllText() или File.ReadAllLines()
         static string ReadDataFromFile(string fileName)
         {
             var data = "";
@@ -37,10 +40,13 @@ namespace _01_mark
             }
             return data;
         }
+
+        //TODO. тоже можно проще. см. System.IO.File.
         static void WriteDataFromFile(string[] data, string fileName)
         {
             using (var writer = new StreamWriter(fileName))
             {
+                //TODO. Если хотим генерировать валидный HTML - можно заодно добавить doctype, и тэг html.
                 writer.Write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
                 foreach (var line in data)
                     writer.Write(line);
