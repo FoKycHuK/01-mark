@@ -31,13 +31,17 @@ namespace _01_mark
             var lines = text.Split('\n');
             lines[0] = "<p>" + lines[0];
             lines[lines.Length - 1] += "</p>";
-            //TODO. Можно написать проще. Можно попробовать при помощи fold/Aggregate http://en.wikipedia.org/wiki/Fold_(higher-order_function) 
-            for (int i = 1; i < lines.Length; i++)
-                if (String.IsNullOrWhiteSpace(lines[i]))
-                    lines[i] += "</p><p>";
-            return lines;
+            return lines
+                .Select(x =>
+                {
+                    if (String.IsNullOrWhiteSpace(x))
+                        return x + "</p><p>";
+                    else
+                        return x;
+                })
+                .ToArray();
         }
-        
+
         //TODO. очень очень сложно. см комментарии в почте.
         public static ParserOutputData ParseOnParts(string line, string symbols)
         {
@@ -56,9 +60,9 @@ namespace _01_mark
                 }
                 if (nowCoded)
                 {
-                    if (i == splited.Length - 1 && 
-                        splited[i].Length == 0 || 
-                        splited[i].Length > 0 && 
+                    if (i == splited.Length - 1 &&
+                        splited[i].Length == 0 ||
+                        splited[i].Length > 0 &&
                         !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         codedParts.Add(new ParsedRange(codedFrom, i - 1));
@@ -70,8 +74,8 @@ namespace _01_mark
                 else
                 {
                     if (i == 1 &&
-                        splited[0].Length == 0 || 
-                        splited[i - 1].Length > 0 
+                        splited[0].Length == 0 ||
+                        splited[i - 1].Length > 0
                         && !Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         nowCoded = true;
@@ -97,11 +101,12 @@ namespace _01_mark
                 parsed[selectedPart.Item1] = startTag + parsed[selectedPart.Item1];
                 parsed[selectedPart.Item2] += endTag;
             }
+
             return String.Join("", parsed);
         }
         public static void ParseBackticks(string[] lines)
         {
-            
+
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
                 var data = ParseOnParts(lines[lineNum], "`");
