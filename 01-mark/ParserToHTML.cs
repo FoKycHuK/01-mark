@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace _01_mark
 {
@@ -14,33 +15,15 @@ namespace _01_mark
             var replacedSpecial = ParseSpecialSymbols(text);
             var lines = ParseLines(replacedSpecial);
             ParseBackticks(lines);
-            ParseDoubleUnderlines(lines);
-            ParseUnderlines(lines);
+            ParseUnderlines(lines, "__", "strong");
+            ParseUnderlines(lines, "_", "em");
             RemoveEscapeChars(lines);
             return lines;
         }
 
         public static string ParseSpecialSymbols(string text)
         {
-            //TODO. а еще бывают аттрибуты в одинарных кавычках <div style='display:none'/>. Use HttpUtility.HtmlEncode
-            var res = "";
-            foreach (var symbol in text)
-                switch (symbol)
-                {
-                    case '<':
-                        res += "&lt;";
-                        break;
-                    case '>':
-                        res += "&gt;";
-                        break;
-                    case '"':
-                        res += "&quot;";
-                        break;
-                    default:
-                        res += symbol;
-                        break;
-                }
-            return res;
+            return HttpUtility.HtmlEncode(text);
         }
 
         public static string[] ParseLines(string text)
@@ -50,20 +33,8 @@ namespace _01_mark
             lines[lines.Length - 1] += "</p>";
             //TODO. Можно написать проще. Можно попробовать при помощи fold/Aggregate http://en.wikipedia.org/wiki/Fold_(higher-order_function) 
             for (int i = 1; i < lines.Length; i++)
-            {                
-                //??? wtf кажется, винда добавляет с переносом (код 10) еще какой-то символ(код 13). ну ладно. 
-                //TODO. Это норма. см http://en.wikipedia.org/wiki/Newline. Было бы прикольно, чтобы парсер работал с разными newline, в том числе если в файле смесь /10/13 и /10
-                //TODO. можно проще. use Linq and String.IsNullOrWhiteSpace
-                bool allSpaces = true;
-                foreach (char symbol in lines[i])
-                    if (symbol != ' ' && symbol != (char) 13)
-                        allSpaces = false;
-                if (allSpaces)
-                {
-                    lines[i - 1] += "</p>";
-                    lines[i] += "<p>";
-                }
-            }
+                if (String.IsNullOrWhiteSpace(lines[i]))
+                    lines[i] += "</p><p>";
             return lines;
         }
         
@@ -72,10 +43,10 @@ namespace _01_mark
         {
             var splited = Regex.Split(line, symbols);
             if (splited.Length < 3)
-                return new ParserOutputData(new string[] { line }, new List<Tuple<int, int>>());
+                return new ParserOutputData(new string[] { line }, new List<ParsedRange>());
             var nowCoded = false;
             int codedFrom = -1;
-            var codedParts = new List<Tuple<int, int>>(); // элементы массива, которые будут подвергнуты обработке и тегам. включая оба.
+            var codedParts = new List<ParsedRange>(); // элементы массива, которые будут подвергнуты обработке и тегам. включая оба.
             for (var i = 1; i < splited.Length; i++) // генерим все части, которые нужно закодить.
             {
                 if (splited[i - 1].Length > 0 && splited[i - 1].Last() == '\\')
@@ -90,7 +61,7 @@ namespace _01_mark
                         splited[i].Length > 0 && 
                         !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
-                        codedParts.Add(Tuple.Create(codedFrom, i - 1));
+                        codedParts.Add(new ParsedRange(codedFrom, i - 1));
                         nowCoded = false;
                     }
                     else
@@ -146,27 +117,19 @@ namespace _01_mark
                                 newPart += symbol;
                         parsed[i] = newPart;
                     }
-                //TODO. вернуть ноый массив вместо того, чтобы изменять исходный.
+                //TODO. вернуть ноый массив вместо того, чтобы изменять исходный.8
                 lines[lineNum] = AddTags(data, lines[lineNum], "code");
             }
         }
-        //TODO. очень похожие методы. как исправить?
-        public static void ParseUnderlines(string[] lines)
+        public static void ParseUnderlines(string[] lines, string symbols, string code)
         {
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
-                var data = ParseOnParts(lines[lineNum], "_");
-                lines[lineNum] = AddTags(data, lines[lineNum], "em");
+                var data = ParseOnParts(lines[lineNum], symbols);
+                lines[lineNum] = AddTags(data, lines[lineNum], code);
             }
         }
-        public static void ParseDoubleUnderlines(string[] lines)
-        {
-            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
-            {
-                var data = ParseOnParts(lines[lineNum], "__");
-                lines[lineNum] = AddTags(data, lines[lineNum], "strong");
-            }
-        }
+
         public static void RemoveEscapeChars(string[] lines)
         {
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
