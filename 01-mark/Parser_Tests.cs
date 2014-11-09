@@ -76,8 +76,8 @@ namespace _01_mark
             new string[] { "<strong>THIS IS STRONG</strong>" }, 
             TestName = "Correct parsing double underlines")]
 
-        [TestCase(new string[] { "_norm__ __THIS__IS______STRONG__ __small(cause 3 underline, not 2)___" },
-            new string[] { "_norm__ <strong>THIS__IS______STRONG</strong> __small(cause 3 underline, not 2)___" }, 
+        [TestCase(new string[] { "_norm__ __THIS__IS___STRONG__ __small(cause 3 underline, not 2)___" },
+            new string[] { "_norm__ <strong>THIS\\_\\_IS\\_\\_\\_STRONG</strong> __small(cause 3 underline, not 2)___" }, 
             TestName = "Correct double underlines in single underlines")]
 
         [TestCase(new string[] { "\\__norm__ __norm\\__" }, 
@@ -85,7 +85,7 @@ namespace _01_mark
             TestName = "Avoid tagged")]
 
         [TestCase(new string[] { "__ strong _ strong __ not strong _"},
-            new string[] { "<strong> strong _ strong </strong> not strong _"},
+            new string[] { "<strong> strong \\_ strong </strong> not strong _"},
             TestName = "Correct parse underline in double underlines")]
 
         public void ParsingDoubleUnderlineTest(string[] text, string[] ans)
@@ -98,8 +98,8 @@ namespace _01_mark
             new string[] { "some, <em>SOME</em> , some" }, 
             TestName = "Correct parsing underlines")]
 
-        [TestCase(new string[] { "bla, _bla_bla_ bla _aa_____qqq_" },
-            new string[] { "bla, <em>bla_bla</em> bla <em>aa_____qqq</em>" }, 
+        [TestCase(new string[] { "bla, _bla_bla_ bla _aa___qqq_" },
+            new string[] { "bla, <em>bla\\_bla</em> bla <em>aa\\_\\_\\_qqq</em>" }, 
             TestName = "Correct parsing underlines with multiunderlines")]
 
         [TestCase(new string[] { "bla, \\_bla_bla_ bla" }, 
@@ -147,9 +147,9 @@ namespace _01_mark
         public void Mixed_underlines_test()
         {
             var text = new string[] { "_em __not strong_ not em__" };
-            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
             MarkdownProcessor.ParseUnderlines(text, "_", "em");
-            var ans = new string[] { "<em>em __not strong</em> not em__" };
+            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
+            var ans = new string[] { "<em>em \\_\\_not strong</em> not em__" };
             Assert.AreEqual(ans, text);
         }
     }

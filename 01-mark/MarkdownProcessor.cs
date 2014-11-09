@@ -112,27 +112,33 @@ namespace _01_mark
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
                 var data = ParseOnParts(lines[lineNum], "`");
-                var parsed = data.parsedData;
-                foreach (var codedPart in data.parsedParts) // нейтрализуем все спецсимволы в распаршеном коде.
-                    for (var i = codedPart.start; i <= codedPart.end; i++)
-                    {
-                        var newPart = "";
-                        foreach (var symbol in parsed[i])
-                            if (symbol == '_')
-                                newPart += "\\_";
-                            else
-                                newPart += symbol;
-                        parsed[i] = newPart;
-                    }
-                lines[lineNum] = AddTags(data, lines[lineNum], "code");
+                var parsedLine = ReplaceAllUnderlines(lines[lineNum], data);
+                lines[lineNum] = AddTags(data, parsedLine, "code");
             }
+        }
+        public static string ReplaceAllUnderlines(string line, ParserOutputData data)
+        {
+            var parsed = data.parsedData;
+            foreach (var codedPart in data.parsedParts)
+                for (var i = codedPart.start; i <= codedPart.end; i++)
+                {
+                    var newPart = "";
+                    foreach (var symbol in parsed[i])
+                        if (symbol == '_')
+                            newPart += "\\_";
+                        else
+                            newPart += symbol;
+                    parsed[i] = newPart;
+                }
+            return String.Join("", parsed);
         }
         public static void ParseUnderlines(string[] lines, string symbols, string code)
         {
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
                 var data = ParseOnParts(lines[lineNum], symbols);
-                lines[lineNum] = AddTags(data, lines[lineNum], code);
+                var parsedLine = ReplaceAllUnderlines(lines[lineNum], data);
+                lines[lineNum] = AddTags(data, parsedLine, code);
             }
         }
 
