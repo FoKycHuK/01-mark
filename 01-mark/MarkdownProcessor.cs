@@ -99,7 +99,6 @@ namespace _01_mark
             var parsed = data.parsedData;
             var startTag = "<" + tag + ">";
             var endTag = "</" + tag + ">";
-            //todo. use linq.
             foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
             {
                 parsed[selectedPart.start] = startTag + parsed[selectedPart.start];
@@ -110,7 +109,6 @@ namespace _01_mark
         }
         public static void ParseBackticks(string[] lines)
         {
-
             for (var lineNum = 0; lineNum < lines.Length; lineNum++)
             {
                 var data = ParseOnParts(lines[lineNum], "`");
@@ -126,7 +124,6 @@ namespace _01_mark
                                 newPart += symbol;
                         parsed[i] = newPart;
                     }
-                //TODO. вернуть ноый массив вместо того, чтобы изменять исходный.8
                 lines[lineNum] = AddTags(data, lines[lineNum], "code");
             }
         }
