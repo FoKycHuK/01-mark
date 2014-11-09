@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="ParsedRange.cs" />
     <Compile Include="ParserOutputData.cs" />
-    <Compile Include="ParserToHTML.cs" />
+    <Compile Include="MarkdownProcessor.cs" />
     <Compile Include="Parser_Tests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

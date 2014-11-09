@@ -8,12 +8,12 @@ namespace _01_mark
 {
     public class ParsedRange
     {
-        public readonly int Item1;
-        public readonly int Item2;
+        public readonly int start;
+        public readonly int end;
         public ParsedRange(int start, int end)
         {
-            Item1 = start;
-            Item2 = end;
+            this.start = start;
+            this.end = end;
         }
     }
 }

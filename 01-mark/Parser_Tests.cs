@@ -13,13 +13,13 @@ namespace _01_mark
         public void Replace_special_test()
         {
             var text = "\"><";
-            Assert.AreEqual("&quot;&gt;&lt;", ParserToHTML.ParseSpecialSymbols(text));
+            Assert.AreEqual("&quot;&gt;&lt;", MarkdownProcessor.ParseSpecialSymbols(text));
         }
         [Test]
         public void Replace_special_in_right_order()
         {
             var text = "<p> super test >>> \"<\"";
-            Assert.AreEqual("&lt;p&gt; super test &gt;&gt;&gt; &quot;&lt;&quot;", ParserToHTML.ParseSpecialSymbols(text));
+            Assert.AreEqual("&lt;p&gt; super test &gt;&gt;&gt; &quot;&lt;&quot;", MarkdownProcessor.ParseSpecialSymbols(text));
         }
 
 
@@ -27,19 +27,19 @@ namespace _01_mark
         public void Parsing_one_line()
         {
             var text = "Just one line";
-            Assert.AreEqual(new string[] { "<p>Just one line</p>" }, ParserToHTML.ParseLines(text));
+            Assert.AreEqual(new string[] { "<p>Just one line</p>" }, MarkdownProcessor.ParseLines(text));
         }
         [Test]
         public void Parsing_few_lines()
         {
             var text = "Just one line\nAnd another one.    \n And some spaces \n ";
-            Assert.AreEqual(new string[] { "<p>Just one line", "And another one.    ", " And some spaces ", " </p>" }, ParserToHTML.ParseLines(text));
+            Assert.AreEqual(new string[] { "<p>Just one line", "And another one.    ", " And some spaces ", " </p>" }, MarkdownProcessor.ParseLines(text));
         }
         [Test]
         public void Paragraph_divisions()
         {
             var text = "some here\n\nText\n   \n        \n \n";
-            Assert.AreEqual(new string[] { "<p>some here", "</p><p>", "Text", "   </p><p>", "        </p><p>", " </p><p>", "</p>" }, ParserToHTML.ParseLines(text));
+            Assert.AreEqual(new string[] { "<p>some here", "</p><p>", "Text", "   </p><p>", "        </p><p>", " </p><p>", "</p>" }, MarkdownProcessor.ParseLines(text));
         }
 
         [TestCase(new string[] { "uncoded, `coded`" },
@@ -68,7 +68,7 @@ namespace _01_mark
 
         public void ParsingBackticksTest(string[] text, string[] ans)
         {
-            ParserToHTML.ParseBackticks(text);
+            MarkdownProcessor.ParseBackticks(text);
             Assert.AreEqual(ans, text);
         }
 
@@ -84,9 +84,13 @@ namespace _01_mark
             new string[] { "\\__norm__ __norm\\__" }, 
             TestName = "Avoid tagged")]
 
+        [TestCase(new string[] { "__ strong _ strong __ not strong _"},
+            new string[] { "<strong> strong _ strong </strong> not strong _"},
+            TestName = "Correct parse underline in double underlines")]
+
         public void ParsingDoubleUnderlineTest(string[] text, string[] ans)
         {
-            ParserToHTML.ParseUnderlines(text, "__", "strong");
+            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
             Assert.AreEqual(ans, text);
         }
 
@@ -108,7 +112,7 @@ namespace _01_mark
 
         public void ParsingUnderlineTest(string[] text, string[] ans)
         {
-            ParserToHTML.ParseUnderlines(text, "_", "em");
+            MarkdownProcessor.ParseUnderlines(text, "_", "em");
             Assert.AreEqual(ans, text);
         }
 
@@ -134,7 +138,18 @@ namespace _01_mark
 
         public void RemovingEscapeTest(string[] text, string[] ans)
         {
-            ParserToHTML.RemoveEscapeChars(text);
+            MarkdownProcessor.RemoveEscapeChars(text);
+            Assert.AreEqual(ans, text);
+        }
+
+
+        [Test]
+        public void Mixed_underlines_test()
+        {
+            var text = new string[] { "_em __not strong_ not em__" };
+            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
+            MarkdownProcessor.ParseUnderlines(text, "_", "em");
+            var ans = new string[] { "<em>em __not strong</em> not em__" };
             Assert.AreEqual(ans, text);
         }
     }

@@ -8,7 +8,7 @@ using System.Web;
 
 namespace _01_mark
 {
-    public class ParserToHTML
+    public class MarkdownProcessor
     {
         public static string[] Parse(string text)
         {
@@ -63,7 +63,9 @@ namespace _01_mark
                     if (i == splited.Length - 1 &&
                         splited[i].Length == 0 ||
                         splited[i].Length > 0 &&
-                        !Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
+                        !Char.IsLetterOrDigit(splited[i].First()) &&
+                        splited[i].First() != '_')
+                        //!Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         codedParts.Add(new ParsedRange(codedFrom, i - 1));
                         nowCoded = false;
@@ -75,8 +77,10 @@ namespace _01_mark
                 {
                     if (i == 1 &&
                         splited[0].Length == 0 ||
-                        splited[i - 1].Length > 0
-                        && !Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
+                        splited[i - 1].Length > 0 &&
+                        !Char.IsLetterOrDigit(splited[i - 1].Last()) &&
+                        splited[i - 1].Last() != '_') // разве так лучше? ну ладно :)
+                        //!Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
                     {
                         nowCoded = true;
                         codedFrom = i;
@@ -98,8 +102,8 @@ namespace _01_mark
             //todo. use linq.
             foreach (var selectedPart in data.parsedParts) // парсер все сделал за нас. просто добавим тэги.
             {
-                parsed[selectedPart.Item1] = startTag + parsed[selectedPart.Item1];
-                parsed[selectedPart.Item2] += endTag;
+                parsed[selectedPart.start] = startTag + parsed[selectedPart.start];
+                parsed[selectedPart.end] += endTag;
             }
 
             return String.Join("", parsed);
@@ -112,7 +116,7 @@ namespace _01_mark
                 var data = ParseOnParts(lines[lineNum], "`");
                 var parsed = data.parsedData;
                 foreach (var codedPart in data.parsedParts) // нейтрализуем все спецсимволы в распаршеном коде.
-                    for (var i = codedPart.Item1; i <= codedPart.Item2; i++)
+                    for (var i = codedPart.start; i <= codedPart.end; i++)
                     {
                         var newPart = "";
                         foreach (var symbol in parsed[i])

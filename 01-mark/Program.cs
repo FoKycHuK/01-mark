@@ -25,7 +25,7 @@ namespace _01_mark
                 outputFileName = args[1];
             var htmlCodeString = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
             var data = File.ReadAllText(inputFileName);
-            var listOfLines = ParserToHTML.Parse(data).ToList<string>();
+            var listOfLines = MarkdownProcessor.Parse(data).ToList<string>();
             listOfLines.Insert(0, htmlCodeString);
             File.WriteAllLines(outputFileName, listOfLines.ToArray());
             Console.WriteLine("complete!");
