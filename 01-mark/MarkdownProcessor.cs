@@ -45,6 +45,9 @@ namespace _01_mark
         //TODO. очень очень сложно. см комментарии в почте.
         public static ParserOutputData ParseOnParts(string line, string symbols)
         {
+            //генерить первое самому, потом в метод отправлять очередную строку вместе с параметром.
+            //возвращать измененную строку.если последний символ > -- раскодено. первый символ < -- закодено. по циклу до конца
+            //пробежать по всему, в конце, если закодено, закрыть тег. профит
             var splited = Regex.Split(line, symbols);
             if (splited.Length < 3)
                 return new ParserOutputData(new string[] { line }, new List<ParsedRange>());
@@ -63,9 +66,7 @@ namespace _01_mark
                     if (i == splited.Length - 1 &&
                         splited[i].Length == 0 ||
                         splited[i].Length > 0 &&
-                        !Char.IsLetterOrDigit(splited[i].First()) &&
-                        splited[i].First() != '_')
-                        //!Regex.IsMatch(splited[i].First().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
+                        IsGoodChar(splited[i].First()))
                     {
                         codedParts.Add(new ParsedRange(codedFrom, i - 1));
                         nowCoded = false;
@@ -78,9 +79,7 @@ namespace _01_mark
                     if (i == 1 &&
                         splited[0].Length == 0 ||
                         splited[i - 1].Length > 0 &&
-                        !Char.IsLetterOrDigit(splited[i - 1].Last()) &&
-                        splited[i - 1].Last() != '_') // разве так лучше? ну ладно :)
-                        //!Regex.IsMatch(splited[i - 1].Last().ToString(), "^[a-zA-Zа-яА-Я0-9_]"))
+                        IsGoodChar(splited[i - 1].Last()))
                     {
                         nowCoded = true;
                         codedFrom = i;
@@ -94,6 +93,10 @@ namespace _01_mark
             return new ParserOutputData(splited, codedParts);
         }
 
+        private static bool IsGoodChar(char symbol)
+        {
+            return !Char.IsLetterOrDigit(symbol) && symbol != '_';
+        }
         public static string AddTags(ParserOutputData data, string line, string tag)
         {
             var parsed = data.parsedData;
