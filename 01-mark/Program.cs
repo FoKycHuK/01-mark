@@ -12,23 +12,26 @@ namespace _01_mark
     {
         static void Main(string[] args)
         {
-            var inputFileName =  "../../../";
-            var outputFileName = "../../../output.html";
+            var defaultInputFileName =  "../../../";
+            var inputFileName = "";
             if (args.Length == 0)
             {
                 Console.Write("Enter input file name: ");
-                inputFileName += Console.ReadLine();
+                defaultInputFileName += Console.ReadLine();
             }
             else
-                inputFileName += args[0];
-            if (args.Length >= 2)
-                outputFileName = args[1];
+                inputFileName = args[0];
+            if (!File.Exists(inputFileName))
+            {
+                inputFileName = defaultInputFileName + inputFileName;
+                if (!File.Exists(inputFileName))
+                    throw new FileNotFoundException("Файл не найден.");
+            }
             var htmlCodeString = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
             var data = File.ReadAllText(inputFileName);
             var listOfLines = MarkdownProcessor.Parse(data).ToList<string>();
             listOfLines.Insert(0, htmlCodeString);
-            File.WriteAllLines(outputFileName, listOfLines.ToArray());
-            Console.WriteLine("complete!");
+            File.WriteAllLines("output.html", listOfLines.ToArray());
         }
     }
 }
