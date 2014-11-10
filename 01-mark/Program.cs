@@ -17,7 +17,7 @@ namespace _01_mark
             if (args.Length == 0)
             {
                 Console.Write("Enter input file name: ");
-                defaultInputFileName += Console.ReadLine();
+                inputFileName = Console.ReadLine();
             }
             else
                 inputFileName = args[0];
