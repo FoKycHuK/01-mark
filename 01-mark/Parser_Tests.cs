@@ -23,24 +23,24 @@ namespace _01_mark
         }
 
 
-        [Test]
-        public void Parsing_one_line()
+        [TestCase(new string[] {"Just one line"}, 
+            new string[] { "<p>Just one line</p>" }, 
+            TestName = "Parse one line on paragraph")]
+
+        [TestCase(new string[] { "Just one line", "And another one.    ", " And some spaces ", " " }, 
+            new string[] { "<p>Just one line", "And another one.    ", " And some spaces ", " </p>" }, 
+            TestName = "Parsing few lines on paragraph")]
+
+        [TestCase(new string[] { "some here", "", "Text", "   ", "        ", " ", "" },
+            new string[] { "<p>some here", "</p><p>", "Text", "   </p><p>", "        </p><p>", " </p><p>", "</p>" },
+            TestName = "Paragraph divisions test")]
+
+        public void ParagraphTest(string[] text, string[] ans)
         {
-            var text = "Just one line";
-            Assert.AreEqual(new string[] { "<p>Just one line</p>" }, MarkdownProcessor.ParseLines(text));
+            var lines = MarkdownProcessor.ParseParagraphs(text);
+            Assert.AreEqual(ans, lines);
         }
-        [Test]
-        public void Parsing_few_lines()
-        {
-            var text = "Just one line\nAnd another one.    \n And some spaces \n ";
-            Assert.AreEqual(new string[] { "<p>Just one line", "And another one.    ", " And some spaces ", " </p>" }, MarkdownProcessor.ParseLines(text));
-        }
-        [Test]
-        public void Paragraph_divisions()
-        {
-            var text = "some here\n\nText\n   \n        \n \n";
-            Assert.AreEqual(new string[] { "<p>some here", "</p><p>", "Text", "   </p><p>", "        </p><p>", " </p><p>", "</p>" }, MarkdownProcessor.ParseLines(text));
-        }
+
 
         [TestCase(new string[] { "uncoded, `coded`" },
             new string[] { "uncoded, <code>coded</code>" },
@@ -68,7 +68,7 @@ namespace _01_mark
 
         public void ParsingBackticksTest(string[] text, string[] ans)
         {
-            MarkdownProcessor.ParseBackticks(text);
+            text = MarkdownProcessor.ParseSymbols(text, "`", "code");
             Assert.AreEqual(ans, text);
         }
 
@@ -90,7 +90,7 @@ namespace _01_mark
 
         public void ParsingDoubleUnderlineTest(string[] text, string[] ans)
         {
-            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
+            text = MarkdownProcessor.ParseSymbols(text, "__", "strong");
             Assert.AreEqual(ans, text);
         }
 
@@ -112,7 +112,7 @@ namespace _01_mark
 
         public void ParsingUnderlineTest(string[] text, string[] ans)
         {
-            MarkdownProcessor.ParseUnderlines(text, "_", "em");
+            text = MarkdownProcessor.ParseSymbols(text, "_", "em");
             Assert.AreEqual(ans, text);
         }
 
@@ -138,18 +138,27 @@ namespace _01_mark
 
         public void RemovingEscapeTest(string[] text, string[] ans)
         {
-            MarkdownProcessor.RemoveEscapeChars(text);
+            text = MarkdownProcessor.RemoveEscapeChars(text);
             Assert.AreEqual(ans, text);
         }
 
 
-        [Test]
-        public void Mixed_underlines_test()
+        [TestCase(new string[] { "__strong _strong__ simple_" }, 
+            new string[] { "<strong>strong \\_strong</strong> simple_" }, 
+            TestName = "Mixed underlines test")]
+
+        [TestCase(new string[] { "_em __strong__ em_" }, 
+            new string[] { "<em>em <strong>strong</strong> em</em>" }, 
+            TestName = "Strong in em test")]
+
+        [TestCase(new string[] { "__strong _strong_ strong__" }, 
+            new string[] { "<strong>strong \\_strong\\_ strong</strong>" }, //да, такая вложенность не работает. имею право по условиям задачи.
+            TestName = "Em in strong test")]
+
+        public void Complex_tests(string[] text, string[] ans)
         {
-            var text = new string[] { "_em __not strong_ not em__" };
-            MarkdownProcessor.ParseUnderlines(text, "_", "em");
-            MarkdownProcessor.ParseUnderlines(text, "__", "strong");
-            var ans = new string[] { "<em>em \\_\\_not strong</em> not em__" };
+            text = MarkdownProcessor.ParseSymbols(text, "__", "strong");
+            text = MarkdownProcessor.ParseSymbols(text, "_", "em");
             Assert.AreEqual(ans, text);
         }
     }

@@ -14,10 +14,11 @@ namespace _01_mark
         {
             var replacedSpecial = ParseSpecialSymbols(text);
             var lines = ParseLines(replacedSpecial);
-            ParseBackticks(lines);
-            ParseUnderlines(lines, "__", "strong");
-            ParseUnderlines(lines, "_", "em");
-            RemoveEscapeChars(lines);
+            lines = ParseParagraphs(lines);
+            lines = ParseSymbols(lines, "`", "code");
+            lines = ParseSymbols(lines, "__", "strong");
+            lines = ParseSymbols(lines, "_", "em");
+            lines = RemoveEscapeChars(lines);
             return lines;
         }
 
@@ -28,7 +29,10 @@ namespace _01_mark
 
         public static string[] ParseLines(string text)
         {
-            var lines = text.Split('\n');
+            return text.Split('\n');
+        }
+        public static string[] ParseParagraphs(string[] lines)
+        {
             lines[0] = "<p>" + lines[0];
             lines[lines.Length - 1] += "</p>";
             return lines
@@ -42,7 +46,7 @@ namespace _01_mark
                 .ToArray();
         }
 
-        public static ParserOutputData ParseOnParts(string line, string symbols)
+        private static ParserOutputData ParseOnParts(string line, string symbols)
         {
             var splited = Regex.Split(line, symbols);
             var nowCoded = false;
@@ -55,11 +59,9 @@ namespace _01_mark
                     splited[i - 1] += symbols;
                     continue;
                 }
-
-
                 var isChanged = IsChangedState(
-                    nowCoded, 
-                    nowCoded ? splited[i] : splited[i - 1], 
+                    nowCoded,
+                    nowCoded ? splited[i] : splited[i - 1],
                     i == 1 || i == splited.Length - 1);
                 if (isChanged)
                 {
@@ -87,7 +89,7 @@ namespace _01_mark
         {
             return !Char.IsLetterOrDigit(symbol) && symbol != '_';
         }
-        public static string AddTags(ParserOutputData data, string line, string tag)
+        private static string AddTags(ParserOutputData data, string line, string tag)
         {
             var parsed = data.parsedData;
             var startTag = "<" + tag + ">";
@@ -100,16 +102,7 @@ namespace _01_mark
 
             return String.Join("", parsed);
         }
-        public static void ParseBackticks(string[] lines)
-        {
-            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
-            {
-                var data = ParseOnParts(lines[lineNum], "`");
-                var parsedLine = ReplaceAllUnderlines(lines[lineNum], data);
-                lines[lineNum] = AddTags(data, parsedLine, "code");
-            }
-        }
-        public static string ReplaceAllUnderlines(string line, ParserOutputData data)
+        private static string ReplaceAllUnderlines(string line, ParserOutputData data)
         {
             var parsed = data.parsedData;
             foreach (var codedPart in data.parsedParts)
@@ -125,35 +118,38 @@ namespace _01_mark
                 }
             return String.Join("", parsed);
         }
-        public static void ParseUnderlines(string[] lines, string symbols, string code)
+        public static string[] ParseSymbols(string[] lines, string symbols, string code)
         {
-            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
-            {
-                var data = ParseOnParts(lines[lineNum], symbols);
-                var parsedLine = ReplaceAllUnderlines(lines[lineNum], data);
-                lines[lineNum] = AddTags(data, parsedLine, code);
-            }
+            return lines
+                .Select(x =>
+                {
+                    var data = ParseOnParts(x, symbols);
+                    var parsedLine = ReplaceAllUnderlines(x, data);
+                    return AddTags(data, parsedLine, code);
+                })
+                .ToArray();
         }
 
-        public static void RemoveEscapeChars(string[] lines)
+        public static string[] RemoveEscapeChars(string[] lines)
         {
-            for (var lineNum = 0; lineNum < lines.Length; lineNum++)
-            {
-                var oldLine = lines[lineNum];
-                var newLine = "";
-                for (var i = 0; i < oldLine.Length; i++)
-                    if (oldLine[i] == '\\')
-                    {
-                        if (i != oldLine.Length - 1 && oldLine[i + 1] == '\\')
+            return lines
+                .Select(x =>
+                {
+                    var newLine = "";
+                    for (var i = 0; i < x.Length; i++)
+                        if (x[i] == '\\')
                         {
-                            newLine += '\\';
-                            i++;
+                            if (i != x.Length - 1 && x[i + 1] == '\\')
+                            {
+                                newLine += '\\';
+                                i++;
+                            }
                         }
-                    }
-                    else
-                        newLine += oldLine[i];
-                lines[lineNum] = newLine;
-            }
+                        else
+                            newLine += x[i];
+                    return newLine;
+                })
+                .ToArray();
         }
     }
 }
