@@ -42,17 +42,11 @@ namespace _01_mark
                 .ToArray();
         }
 
-        //TODO. очень очень сложно. см комментарии в почте.
         public static ParserOutputData ParseOnParts(string line, string symbols)
         {
-            //генерить первое самому, потом в метод отправлять очередную строку вместе с параметром.
-            //возвращать измененную строку.если последний символ > -- раскодено. первый символ < -- закодено. по циклу до конца
-            //пробежать по всему, в конце, если закодено, закрыть тег. профит
             var splited = Regex.Split(line, symbols);
-            if (splited.Length < 3)
-                return new ParserOutputData(new string[] { line }, new List<ParsedRange>());
             var nowCoded = false;
-            int codedFrom = -1;
+            var codedFrom = 0;
             var codedParts = new List<ParsedRange>(); // элементы массива, которые будут подвергнуты обработке и тегам. включая оба.
             for (var i = 1; i < splited.Length; i++) // генерим все части, которые нужно закодить.
             {
@@ -61,38 +55,34 @@ namespace _01_mark
                     splited[i - 1] += symbols;
                     continue;
                 }
-                if (nowCoded)
+
+
+                var isChanged = IsChangedState(
+                    nowCoded, 
+                    nowCoded ? splited[i] : splited[i - 1], 
+                    i == 1 || i == splited.Length - 1);
+                if (isChanged)
                 {
-                    if (i == splited.Length - 1 &&
-                        splited[i].Length == 0 ||
-                        splited[i].Length > 0 &&
-                        IsGoodChar(splited[i].First()))
-                    {
+                    if (nowCoded)
                         codedParts.Add(new ParsedRange(codedFrom, i - 1));
-                        nowCoded = false;
-                    }
                     else
-                        splited[i] = symbols + splited[i];
+                        codedFrom = i;
+                    nowCoded = !nowCoded;
                 }
                 else
-                {
-                    if (i == 1 &&
-                        splited[0].Length == 0 ||
-                        splited[i - 1].Length > 0 &&
-                        IsGoodChar(splited[i - 1].Last()))
-                    {
-                        nowCoded = true;
-                        codedFrom = i;
-                    }
-                    else
-                        splited[i - 1] += symbols;
-                }
+                    splited[i - 1] += symbols;
             }
             if (nowCoded)
                 splited[codedFrom - 1] += symbols;
             return new ParserOutputData(splited, codedParts);
         }
 
+        private static bool IsChangedState(bool nowCoded, string line, bool startOrEnd) //получилось супер-кратко, но, возможно, немного запутанно.
+        {
+            if (line.Length == 0)
+                return startOrEnd;
+            return nowCoded ? IsGoodChar(line.First()) : IsGoodChar(line.Last());
+        }
         private static bool IsGoodChar(char symbol)
         {
             return !Char.IsLetterOrDigit(symbol) && symbol != '_';
