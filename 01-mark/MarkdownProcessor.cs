@@ -102,13 +102,17 @@ namespace _01_mark
             foreach (var codedPart in data.parsedParts)
                 for (var i = codedPart.start; i <= codedPart.end; i++)
                 {
-                    var newPart = "";
+                    var newPart = new StringBuilder();
+                    var prev = ' ';
                     foreach (var symbol in parsed[i])
-                        if (symbol == '_')
-                            newPart += "\\_";
+                    {
+                        if (symbol == '_' && prev != '\\')
+                            newPart.Append("\\_");
                         else
-                            newPart += symbol;
-                    parsed[i] = newPart;
+                            newPart.Append(symbol);
+                        prev = symbol;
+                    }
+                    parsed[i] = newPart.ToString();
                 }
             return new ParserOutputData(parsed, data.parsedParts);
         }
@@ -133,19 +137,19 @@ namespace _01_mark
 
         private static string RemoveInLine(string line)
         {
-            var newLine = "";
+            var newLine = new StringBuilder();
             for (var i = 0; i < line.Length; i++)
                 if (line[i] == '\\')
                 {
                     if (i != line.Length - 1 && line[i + 1] == '\\')
                     {
-                        newLine += '\\';
+                        newLine.Append('\\');
                         i++;
                     }
                 }
                 else
-                    newLine += line[i];
-            return newLine;
+                    newLine.Append(line[i]);
+            return newLine.ToString();
         }
     }
 }

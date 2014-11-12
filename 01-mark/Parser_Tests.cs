@@ -110,6 +110,10 @@ namespace _01_mark
             new string[] { "<em>simple</em>." }, 
             TestName = "Correct parsing with dots")]
 
+        [TestCase(new string[] { "_em \\_ em_" },
+            new string[] {"<em>em \\_ em</em>" },
+            TestName = "Not replace selected symbol")]
+
         public void ParsingUnderlineTest(string[] text, string[] ans)
         {
             text = MarkdownProcessor.ParseSymbols(text, "_", "em");
