@@ -36,13 +36,7 @@ namespace _01_mark
             lines[0] = "<p>" + lines[0];
             lines[lines.Length - 1] += "</p>";
             return lines
-                .Select(x =>
-                {
-                    if (String.IsNullOrWhiteSpace(x))
-                        return x + "</p><p>";
-                    else
-                        return x;
-                })
+                .Select(x => { return String.IsNullOrWhiteSpace(x) ? x + "</p><p>" : x; })
                 .ToArray();
         }
 
@@ -102,7 +96,7 @@ namespace _01_mark
 
             return String.Join("", parsed);
         }
-        private static string ReplaceAllUnderlines(string line, ParserOutputData data)
+        private static ParserOutputData ReplaceAllUnderlines(ParserOutputData data)
         {
             var parsed = data.parsedData;
             foreach (var codedPart in data.parsedParts)
@@ -116,7 +110,7 @@ namespace _01_mark
                             newPart += symbol;
                     parsed[i] = newPart;
                 }
-            return String.Join("", parsed);
+            return new ParserOutputData(parsed, data.parsedParts);
         }
         public static string[] ParseSymbols(string[] lines, string symbols, string code)
         {
@@ -124,8 +118,8 @@ namespace _01_mark
                 .Select(x =>
                 {
                     var data = ParseOnParts(x, symbols);
-                    var parsedLine = ReplaceAllUnderlines(x, data);
-                    return AddTags(data, parsedLine, code);
+                    data = ReplaceAllUnderlines(data);
+                    return AddTags(data, x, code);
                 })
                 .ToArray();
         }
@@ -133,23 +127,25 @@ namespace _01_mark
         public static string[] RemoveEscapeChars(string[] lines)
         {
             return lines
-                .Select(x =>
-                {
-                    var newLine = "";
-                    for (var i = 0; i < x.Length; i++)
-                        if (x[i] == '\\')
-                        {
-                            if (i != x.Length - 1 && x[i + 1] == '\\')
-                            {
-                                newLine += '\\';
-                                i++;
-                            }
-                        }
-                        else
-                            newLine += x[i];
-                    return newLine;
-                })
+                .Select(x => { return RemoveInLine(x); })
                 .ToArray();
+        }
+
+        private static string RemoveInLine(string line)
+        {
+            var newLine = "";
+            for (var i = 0; i < line.Length; i++)
+                if (line[i] == '\\')
+                {
+                    if (i != line.Length - 1 && line[i + 1] == '\\')
+                    {
+                        newLine += '\\';
+                        i++;
+                    }
+                }
+                else
+                    newLine += line[i];
+            return newLine;
         }
     }
 }
