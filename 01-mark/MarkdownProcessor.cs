@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+//using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -36,13 +36,13 @@ namespace _01_mark
             lines[0] = "<p>" + lines[0];
             lines[lines.Length - 1] += "</p>";
             return lines
-                .Select(x => { return String.IsNullOrWhiteSpace(x) ? x + "</p><p>" : x; })
+                .Select(x => String.IsNullOrWhiteSpace(x) ? x + "</p><p>" : x )
                 .ToArray();
         }
 
         private static ParserOutputData ParseOnParts(string line, string symbols)
         {
-            var splited = Regex.Split(line, symbols);
+            var splited = line.Split(new string[] { symbols }, StringSplitOptions.None); //Regex.Split(line, symbols);
             var nowCoded = false;
             var codedFrom = 0;
             var codedParts = new List<ParsedRange>(); // элементы массива, которые будут подвергнуты обработке и тегам. включая оба.
@@ -131,7 +131,7 @@ namespace _01_mark
         public static string[] RemoveEscapeChars(string[] lines)
         {
             return lines
-                .Select(x => { return RemoveInLine(x); })
+                .Select(RemoveInLine)
                 .ToArray();
         }
 
